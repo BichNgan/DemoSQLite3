@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         addControl();
         //------------------------------
         khoaHandler=new KhoaHandler(getApplicationContext(),KhoaHandler.DB_NAME,null,1);
-        khoaHandler.onCreate(db);
-        khoaHandler.initData();
+        //khoaHandler.onCreate(db);
+        //khoaHandler.initData();
 
         ArrayList<Khoa> lsKhoa = khoaHandler.loadData();
         //Hiển thị dữ liệu lên listview
@@ -70,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
                 khoaHandler.insertANewRecord(makhoa,tenKhoa );
 
                 valuesLView = convertKhoaToString(khoaHandler.loadData());
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
+                adapter=new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1,valuesLView);
+                lvKhoa.setAdapter(adapter);
             }
         });
     }
