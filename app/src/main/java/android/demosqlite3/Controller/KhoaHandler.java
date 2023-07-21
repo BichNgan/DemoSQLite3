@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+import javax.xml.xpath.XPath;
+
 public class KhoaHandler extends SQLiteOpenHelper {
     public static final String DB_NAME ="qlsv3";
     public static final String PATH ="/data/data/android.demosqlite3/database/qlsv3.db";
@@ -74,4 +76,23 @@ public class KhoaHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
+    public void updateKhoa(Khoa oldKhoa, Khoa newKhoa)
+    {
+        SQLiteDatabase db=SQLiteDatabase.openDatabase(PATH,null,SQLiteDatabase.OPEN_READWRITE);
+        ContentValues values=new ContentValues();
+        values.put(MKHOA_COL,newKhoa.getMakhoa());
+        values.put(TKHOA_COL, newKhoa.getTenkhoa());
+        db.update(TABLE_NAME,values,MKHOA_COL+"=?",
+                new String[]{String.valueOf(oldKhoa.getMakhoa())});
+        db.close();
+    }
+
+
+
+
+
+
+
+
+
 }

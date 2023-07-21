@@ -8,6 +8,7 @@ import android.demosqlite3.Model.Khoa;
 import android.demosqlite3.R;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
     KhoaHandler khoaHandler;
     ArrayList<String> valuesLView = new ArrayList<>();
+    ArrayList<Khoa> lsKhoa=new ArrayList<>();
     ArrayAdapter<String>adapter;
 
     @Override
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         //khoaHandler.onCreate(db);
         //khoaHandler.initData();
 
-        ArrayList<Khoa> lsKhoa = khoaHandler.loadData();
+        lsKhoa= khoaHandler.loadData();
         //Hiển thị dữ liệu lên listview
         valuesLView=convertKhoaToString(lsKhoa);
         adapter=new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1,valuesLView);
@@ -68,12 +70,72 @@ public class MainActivity extends AppCompatActivity {
                 int makhoa=Integer.parseInt(edtMaKhoa.getText().toString());
                 String tenKhoa=edtTenKhoa.getText().toString();
                 khoaHandler.insertANewRecord(makhoa,tenKhoa );
+                loadDataListView();
 
-                valuesLView = convertKhoaToString(khoaHandler.loadData());
-                //adapter.notifyDataSetChanged();
-                adapter=new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1,valuesLView);
-                lvKhoa.setAdapter(adapter);
             }
         });
+
+        //Xử lý chọn item của LsView
+        lvKhoa.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+              Khoa k =lsKhoa.get(position);
+              edtMaKhoa.setText(String.valueOf(k.getMakhoa()));
+              edtMaKhoa.setEnabled(false);
+              edtTenKhoa.setText(k.getTenkhoa());
+            }
+        });
+        //---------------
+        //Xử lý cho nút update
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(edtMaKhoa.getText().toString()==null)
+                {
+                    return;
+                }
+                else {
+                    Khoa newKhoa =
+                            new Khoa(Integer.parseInt(edtMaKhoa.getText().toString()),
+                                    edtTenKhoa.getText().toString());
+                    Khoa oldKhoa =
+                            timKhoa(Integer.parseInt(edtMaKhoa.getText().toString()),lsKhoa);
+                    khoaHandler.updateKhoa(oldKhoa,newKhoa);
+                    loadDataListView();
+
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
+
     }
+
+    public Khoa timKhoa(int makhoa, ArrayList<Khoa>lsKhoa)
+    {
+        for (Khoa a:lsKhoa  ) {
+            if(a.getMakhoa()==makhoa)
+                return a;
+        }
+        return null;
+    }
+    public void loadDataListView()
+    {
+        valuesLView = convertKhoaToString(khoaHandler.loadData());
+        //adapter.notifyDataSetChanged();
+        adapter=new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1,valuesLView);
+        lvKhoa.setAdapter(adapter);
+    }
+
+
+
+
+
 }
